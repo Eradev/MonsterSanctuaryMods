@@ -143,7 +143,7 @@ namespace eradev.monstersanctuary.RandomRandomizer
                     return;
                 }
 
-                if (__instance.Item.name.Contains("SpecialChest"))
+                if (__instance.name.Contains("SpecialChest"))
                 {
                     _log.LogDebug("ChestRandomize ignore: Special chest");
 
