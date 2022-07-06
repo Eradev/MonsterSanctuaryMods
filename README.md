@@ -2,6 +2,6 @@
 
 Mods for Monster Sanctuary
 
-## Random Randomize
+## Random Randomizer
 
 Randomize random encounters and chests' content in Randomizer mode.
