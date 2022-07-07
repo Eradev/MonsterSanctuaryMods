@@ -1,6 +1,8 @@
 # Monster Sanctuary Mods
 
-Mods for Monster Sanctuary
+Mods for Monster Sanctuary.
+
+Released mods are available to download at [ModWorkshop](https://modworkshop.net/user/124854).
 
 ## Data Dumper
 
