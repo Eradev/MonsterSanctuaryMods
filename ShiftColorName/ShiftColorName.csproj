@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net48</TargetFramework>
     <AssemblyName>eradev.monstersanctuary.ShiftColorName</AssemblyName>
-    <Description>Change the monster's name color depending of its shift in certain screens.</Description>
+    <Description>Change the monster name's color depending of its shift in certain screens.</Description>
     <Version>1.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>9.0</LangVersion>

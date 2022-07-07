@@ -20,4 +20,4 @@ Randomize random encounters and chests' content in Randomizer mode.
 
 ##Shift Color Name
 
-Change the monster's name color depending of its shift in certain screens.
+Change the monster name's color depending of its shift in certain screens.
