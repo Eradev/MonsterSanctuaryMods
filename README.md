@@ -8,7 +8,7 @@ Dumps some data into .json files.
 
 ## Display Unhatched Eggs
 
-Display a \* before unhatched eggs' names.
+Display a \* before unhatched eggs' name.
 
 ## Only Show Valid Monsters Evolution
 
@@ -17,3 +17,7 @@ Only show valid monsters when using a Catalyst.
 ## Random Randomizer
 
 Randomize random encounters and chests' content in Randomizer mode.
+
+##Shift Color Name
+
+Change the monster's name color depending of its shift in certain screens.

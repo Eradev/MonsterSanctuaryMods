@@ -1,5 +1,4 @@
 ﻿using BepInEx;
-using BepInEx.Logging;
 using HarmonyLib;
 
 namespace eradev.monstersanctuary.DisplayUnhatchedEggs
