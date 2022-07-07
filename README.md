@@ -18,6 +18,6 @@ Only show valid monsters when using a Catalyst.
 
 Randomize random encounters and chests' content in Randomizer mode.
 
-##Shift Color Name
+## Shift Color Name
 
 Change the monster name's color depending of its shift in certain screens.
