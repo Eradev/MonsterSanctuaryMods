@@ -6,6 +6,14 @@ Mods for Monster Sanctuary
 
 Dumps some data into .json files.
 
+## Display Unhatched Eggs
+
+Display a \* before unhatched eggs' names.
+
+## Only Show Valid Monsters Evolution
+
+Only show valid monsters when using a Catalyst.
+
 ## Random Randomizer
 
 Randomize random encounters and chests' content in Randomizer mode.
