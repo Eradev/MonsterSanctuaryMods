@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net48</TargetFramework>
+    <TargetFramework>net471</TargetFramework>
     <AssemblyName>eradev.monstersanctuary.ShiftColorName</AssemblyName>
     <Description>Change the monster name's color depending of its shift in certain screens.</Description>
     <Version>1.0.1</Version>
