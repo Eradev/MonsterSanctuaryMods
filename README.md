@@ -1,6 +1,8 @@
 # Monster Sanctuary Mods
 
-Mods for Monster Sanctuary
+Mods for Monster Sanctuary.
+
+Released mods are available to download at [ModWorkshop](https://modworkshop.net/user/124854).
 
 ## Data Dumper
 
@@ -18,6 +20,6 @@ Only show valid monsters when using a Catalyst.
 
 Randomize random encounters and chests' content in Randomizer mode.
 
-##Shift Color Name
+## Shift Color Name
 
 Change the monster name's color depending of its shift in certain screens.
