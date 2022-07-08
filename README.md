@@ -12,9 +12,9 @@ Dumps some data into .json files.
 
 Display a \* before unhatched eggs' name.
 
-## Only Show Valid Monsters Evolution
+## Display Valid Monsters Evolution
 
-Only show valid monsters when using a Catalyst.
+Only display valid monsters when choosing a Catalyst target.
 
 ## Random Randomizer
 

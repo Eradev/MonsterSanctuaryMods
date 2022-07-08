@@ -3,10 +3,10 @@ using System.Linq;
 using BepInEx;
 using HarmonyLib;
 
-namespace eradev.monstersanctuary.OnlyShowValidMonstersEvolution
+namespace eradev.monstersanctuary.DisplayValidMonstersEvolution
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-    public class OnlyShowValidMonstersEvolutionPlugin : BaseUnityPlugin
+    public class DisplayValidMonstersEvolutionPlugin : BaseUnityPlugin
     {
         private void Awake()
         {
