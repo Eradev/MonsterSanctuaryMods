@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ShiftColorName", "ShiftColo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DisplayValidMonstersEvolution", "DisplayValidMonstersEvolution\DisplayValidMonstersEvolution.csproj", "{0D41F010-ABFD-4611-BACF-9ACD1295CAD3}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "GetAllArmyRewards", "GetAllArmyRewards\GetAllArmyRewards.csproj", "{FB78FEC5-78DF-454C-AD11-C55B11110A2A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{0D41F010-ABFD-4611-BACF-9ACD1295CAD3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0D41F010-ABFD-4611-BACF-9ACD1295CAD3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0D41F010-ABFD-4611-BACF-9ACD1295CAD3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{FB78FEC5-78DF-454C-AD11-C55B11110A2A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{FB78FEC5-78DF-454C-AD11-C55B11110A2A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{FB78FEC5-78DF-454C-AD11-C55B11110A2A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{FB78FEC5-78DF-454C-AD11-C55B11110A2A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

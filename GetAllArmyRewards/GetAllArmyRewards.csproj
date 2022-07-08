@@ -2,15 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
-    <AssemblyName>eradev.monstersanctuary.RandomRandomizer</AssemblyName>
-    <Description>Randomize random encounters and chests' content in Randomizer mode.</Description>
-    <Version>1.0.2</Version>
+    <AssemblyName>eradev.monstersanctuary.GetAllArmyRewards</AssemblyName>
+    <Description>Get all unlocked army rewards and multiple eggs donation rewards at once.</Description>
+    <Version>1.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>9.0</LangVersion>
-    <RootNamespace>eradev.monstersanctuary.RandomRandomizer</RootNamespace>
-    <PackageId>eradev.monstersanctuary.RandomRandomizer</PackageId>
+    <RootNamespace>eradev.monstersanctuary.GetAllArmyRewards</RootNamespace>
     <Authors>eradev</Authors>
-    <Product>Random Randomizer</Product>
+    <Product>Get All Army Rewards</Product>
   </PropertyGroup>
 
   <ItemGroup>

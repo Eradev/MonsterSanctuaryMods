@@ -16,6 +16,10 @@ Display a \* before unhatched eggs' name.
 
 Only display valid monsters when choosing a Catalyst target.
 
+## Get All Army Rewards
+
+Get all unlocked army rewards and multiple eggs donation rewards at once.
+
 ## Random Randomizer
 
 Randomize random encounters and chests' content in Randomizer mode.
