@@ -26,6 +26,12 @@ namespace eradev.monstersanctuary.ShiftColorName
             private static void Postfix(ref MonsterSummary __instance)
             {
                 var monster = __instance.Monster;
+
+                if (monster == null)
+                {
+                    return;
+                }
+
                 _log.LogDebug($"MonsterSummary.SetMonster :: {monster.GetName()} ({monster.Shift})");
                 _log.LogDebug($"    Before: {__instance.Name.color.ToHtmlRGBA()}");
 

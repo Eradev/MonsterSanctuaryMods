@@ -20,6 +20,10 @@ Only display valid monsters when choosing a Catalyst target.
 
 Get all unlocked army rewards and multiple eggs donation rewards at once.
 
+## Level Caps
+
+Custom level cap for your monsters and enemies.
+
 ## Random Randomizer
 
 Randomize random encounters and chests' content in Randomizer mode.
