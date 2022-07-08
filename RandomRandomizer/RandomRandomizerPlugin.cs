@@ -27,12 +27,22 @@ namespace eradev.monstersanctuary.RandomRandomizer
         private const int MinGoldDefault = 5;
         private const int MaxGoldDefault = 50;
         private const string ItemsBlacklistDefault = "1792,1793,1794,1795,1796,1797"; // Eternity Flame (1792~1797)
+        private const int Tier3LevelUnlockDefault = 10;
+        private const int Tier4LevelUnlockDefault = 20;
+        private const int Tier5LevelUnlockDefault = 30;
+        private const bool DisableCatalystsDefault = true;
+        private const bool DisableEggsDefault = true;
 
         private static ConfigEntry<bool> _randomizeChestsEnabled;
         private static ConfigEntry<float> _goldChance;
         private static ConfigEntry<int> _minGold;
         private static ConfigEntry<int> _maxGold;
         private static ConfigEntry<string> _itemsBlacklist;
+        private static ConfigEntry<int> _tier3LevelUnlock;
+        private static ConfigEntry<int> _tier4LevelUnlock;
+        private static ConfigEntry<int> _tier5LevelUnlock;
+        private static ConfigEntry<bool> _disableCatalysts;
+        private static ConfigEntry<bool> _disableEggs;
 
         private void Awake()
         {
@@ -44,6 +54,11 @@ namespace eradev.monstersanctuary.RandomRandomizer
             _minGold = Config.Bind("Randomized Chests", "Minimum gold", MinGoldDefault, "Minimum value of gold in chests (x100, must be > 0)");
             _maxGold = Config.Bind("Randomized Chests", "Maximum gold", MaxGoldDefault, "Minimum value of gold in chests (x100, must be > 0)");
             _itemsBlacklist = Config.Bind("Randomized Chests", "Blacklist", ItemsBlacklistDefault, "Blacklisted items ID");
+            _tier3LevelUnlock = Config.Bind("Randomized Chests", "Tier 3 level unlock", Tier3LevelUnlockDefault, "Minimum level to get +3 items");
+            _tier4LevelUnlock = Config.Bind("Randomized Chests", "Tier 4 level unlock", Tier4LevelUnlockDefault, "Minimum level to get +4 items");
+            _tier5LevelUnlock = Config.Bind("Randomized Chests", "Tier 5 level unlock", Tier5LevelUnlockDefault, "Minimum level to get +5 items");
+            _disableCatalysts = Config.Bind("Randomized Chests", "Disable Catalysts", DisableCatalystsDefault, "Removes Catalysts from chests");
+            _disableEggs = Config.Bind("Randomized Chests", "Disable Eggs", DisableEggsDefault, "Removes Eggs from chests");
 
             // Ensure minGold is always higher than 0.
             if (_minGold.Value == 0)
@@ -74,6 +89,48 @@ namespace eradev.monstersanctuary.RandomRandomizer
             new Harmony(PluginInfo.PLUGIN_GUID).PatchAll();
 
             Logger.LogInfo($"Plugin {PluginInfo.PLUGIN_GUID} is loaded!");
+        }
+
+        private static GameObject GetValidDrop()
+        {
+            if (_possibleItemsList == null)
+            {
+                var blacklistedItems = _itemsBlacklist.Value.Split(',').Select(int.Parse).ToList();
+                _possibleItemsList = GameController.Instance.WorldData.Referenceables
+                    .Where(x => x?.gameObject?.GetComponent<BaseItem>() != null) // All the items
+                    .Select(x => x.gameObject)
+                    .Where(x => !blacklistedItems.Contains(x.GetComponent<BaseItem>().ID) &&  // Remove blacklisted items
+                                x.GetComponent<KeyItem>() == null && // Remove Keys
+                                x.GetComponent<UniqueItem>() == null && // Remove Unique items (ie. Costumes)
+                                (!_disableEggs.Value || x.GetComponent<Egg>() == null) && // Remove Eggs
+                                (!_disableCatalysts.Value || x.GetComponent<Catalyst>() == null)) // Remove Catalysts
+                    .ToList();
+            }
+
+            var highestLevel = PlayerController.Instance.Monsters.GetHighestLevel();
+
+            var tempPool = _possibleItemsList;
+
+            if (highestLevel < _tier3LevelUnlock.Value)
+            {
+                tempPool = tempPool
+                    .Where(x => !x.GetComponent<BaseItem>().GetName().EndsWith("+3"))
+                    .ToList();
+            }
+            if (highestLevel < _tier4LevelUnlock.Value)
+            {
+                tempPool = tempPool
+                    .Where(x => !x.GetComponent<BaseItem>().GetName().EndsWith("+4"))
+                    .ToList();
+            }
+            if (highestLevel < _tier5LevelUnlock.Value)
+            {
+                tempPool = tempPool
+                    .Where(x => !x.GetComponent<BaseItem>().GetName().EndsWith("+5"))
+                    .ToList();
+            }
+
+            return tempPool[Rand.Next(0, tempPool.Count)];
         }
 
         [HarmonyPatch(typeof(MonsterEncounter), "Start")]
@@ -174,20 +231,6 @@ namespace eradev.monstersanctuary.RandomRandomizer
                     return;
                 }
 
-                if (_possibleItemsList == null)
-                {
-                    var blacklistedItems = _itemsBlacklist.Value.Split(',').Select(int.Parse).ToList();
-                    _possibleItemsList = GameController.Instance.WorldData.Referenceables
-                        .Where(x => x?.gameObject?.GetComponent<BaseItem>() != null) // All the items
-                        .Select(x => x.gameObject)
-                        .Where(x => !blacklistedItems.Contains(x.GetComponent<BaseItem>().ID) &&  // Remove blacklisted items
-                                    x.GetComponent<KeyItem>() == null && // Remove Keys
-                                    x.GetComponent<UniqueItem>() == null && // Remove Unique items (ie. Costumes)
-                                    x.GetComponent<Egg>() == null && // Remove Eggs
-                                    x.GetComponent<Catalyst>() == null) // Remove Catalysts
-                        .ToList();
-                }
-
                 _log.LogDebug("Randomizing chest content...");
                 _log.LogDebug($"    Chest ID: {__instance.ID}");
                 _log.LogDebug($"    Chest name: {__instance.name}");
@@ -201,7 +244,7 @@ namespace eradev.monstersanctuary.RandomRandomizer
                 else
                 {
                     __instance.Gold = 0;
-                    __instance.Item = _possibleItemsList[Rand.Next(0, _possibleItemsList.Count)];
+                    __instance.Item = GetValidDrop();
                     __instance.Quantity = __instance.Item.GetComponent<Equipment>() != null ? 1 : Rand.Next(1, 4);
                 }
 
