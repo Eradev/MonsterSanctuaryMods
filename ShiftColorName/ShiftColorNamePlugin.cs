@@ -21,10 +21,8 @@ namespace eradev.monstersanctuary.ShiftColorName
         }
 
         [HarmonyPatch(typeof(MonsterSummary), "SetMonster")]
-        // ReSharper disable once IdentifierTypo
         private class MonsterSummarySetMonsterPatch
         {
-            // ReSharper disable once InconsistentNaming
             private static void Postfix(ref MonsterSummary __instance)
             {
                 var monster = __instance.Monster;
@@ -57,11 +55,12 @@ namespace eradev.monstersanctuary.ShiftColorName
             {
                 var text = __instance.gameObject.GetComponent<tk2dTextMesh>();
 
-                if (text != null)
+                if (text != null &&
+                    __instance.gameObject.GetComponentInParent<MonsterArmyMenu>() != null ||
+                        __instance.gameObject.GetComponentInParent<MonsterSummary>() != null)
                 {
                     resetColor = true;
                 }
-
             }
         }
 

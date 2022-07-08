@@ -23,21 +23,21 @@ namespace eradev.monstersanctuary.OnlyShowValidMonstersEvolution
         [HarmonyPatch(typeof(MonsterSelector), "UpdatePages")]
         private class MonsterSelectorUpdatePagesPatch
         {
-            // ReSharper disable once InconsistentNaming
-            private static bool Prefix(ref MonsterSelector __instance)
+            private static bool Prefix(ref MonsterSelector __instance, ref int ___totalPages)
             {
                 if (__instance.CurrentSelectType != MonsterSelector.MonsterSelectType.SelectEvolveTarget)
                 {
                     return true;
                 }
 
+                var monsterPerPage = __instance.MonstersPerRow * __instance.RowCount;
                 var numberEligibleMonsters =
                     PlayerController.Instance.Monsters.Active.Count(x => CurrentCatalyst().EvolvesFromMonster(x)) +
                     PlayerController.Instance.Monsters.Inactive.Count(x => CurrentCatalyst().EvolvesFromMonster(x));
 
-                var totalPages = (int)Math.Ceiling((decimal)numberEligibleMonsters / __instance.MonstersPerRow * __instance.RowCount);
+                var totalPages = (int)Math.Ceiling(numberEligibleMonsters / (decimal)monsterPerPage);
 
-                AccessTools.FieldRefAccess<int>(typeof(MonsterSelector), "totalPages").Invoke(__instance) = totalPages;
+                ___totalPages = totalPages;
 
                 __instance.PageText.gameObject.SetActive(totalPages > 1);
 
@@ -48,67 +48,29 @@ namespace eradev.monstersanctuary.OnlyShowValidMonstersEvolution
         [HarmonyPatch(typeof(MonsterSelector), "ShowMonsters")]
         private class MonsterSelectorShowMonstersPatch
         {
-            // ReSharper disable once InconsistentNaming
-            private static bool Prefix(ref MonsterSelector __instance)
+            private static bool Prefix(ref MonsterSelector __instance, int ___currentPage, int ___totalPages)
             {
                 if (__instance.CurrentSelectType != MonsterSelector.MonsterSelectType.SelectEvolveTarget)
                 {
                     return true;
                 }
 
-                var currentPage =
-                    AccessTools.FieldRefAccess<int>(typeof(MonsterSelector), "currentPage").Invoke(__instance);
-                var totalPages =
-                    AccessTools.FieldRefAccess<int>(typeof(MonsterSelector), "totalPages").Invoke(__instance);
-
-                __instance.PageText.text = $"{Utils.LOCA("Page")}{GameDefines.GetSpaceChar()}{currentPage + 1}/{totalPages}";
                 __instance.MenuList.Clear();
+                __instance.PageText.text = $"{Utils.LOCA("Page")}{GameDefines.GetSpaceChar()}{___currentPage + 1}/{___totalPages}";
 
                 var monstersPerPage = __instance.MonstersPerRow * __instance.RowCount;
-                var num2 = monstersPerPage * currentPage;
+                var allEligibleMonsters =
+                    PlayerController.Instance.Monsters.Active.Where(x => CurrentCatalyst().EvolvesFromMonster(x))
+                        .Concat(PlayerController.Instance.Monsters.Inactive.Where(x => CurrentCatalyst().EvolvesFromMonster(x)))
+                        .ToList();
 
-                var eligibleActiveMonsters = PlayerController.Instance.Monsters.Active.Where(x => CurrentCatalyst().EvolvesFromMonster(x)).ToList();
-                var eligibleInactiveMonsters =
-                    PlayerController.Instance.Monsters.Inactive.Where(x => CurrentCatalyst().EvolvesFromMonster(x)).ToList();
+                var indexStart = monstersPerPage * ___currentPage;
+                var indexEnd = Math.Min(indexStart + monstersPerPage, allEligibleMonsters.Count);
 
-                if (currentPage == 0)
+                for (var index = indexStart; index < indexEnd; index++)
                 {
-                    var index = 0;
-                    foreach (var monster in eligibleActiveMonsters)
-                    {
-                        var menuListItem = __instance.MenuList.AddDisplayable(monster, index, 0);
-                        menuListItem.GetComponent<MonsterSelectorView>().ShowMonster(monster);
-
-                        AccessTools.Method(typeof(MonsterSelector), "UpdateDisabledStatus")
-                            .Invoke(__instance, new object[]
-                            {
-                                menuListItem.GetComponent<MonsterSelectorView>()
-                            });
-
-                        index++;
-                    }
-                }
-                else
-                {
-                    num2 -= eligibleActiveMonsters.Count;
-                }
-
-                for (var index = 0; index < eligibleInactiveMonsters.Count - num2 && __instance.MenuList.DisplayableItemCount < monstersPerPage; ++index)
-                {
-                    var monster = index < eligibleInactiveMonsters.Count - num2
-                        ? eligibleInactiveMonsters[index + num2]
-                        : null;
-
-                    if (monster == null)
-                    {
-                        break;
-                    }
-
-                    var num4 = currentPage == 0
-                        ? index + eligibleActiveMonsters.Count
-                        : index;
-
-                    var menuListItem = __instance.MenuList.AddDisplayable(monster, num4 % __instance.MonstersPerRow, num4 / 6);
+                    var monster = allEligibleMonsters[index];
+                    var menuListItem = __instance.MenuList.AddDisplayable(monster, index, 0);
 
                     menuListItem.GetComponent<MonsterSelectorView>().ShowMonster(monster);
 
@@ -122,7 +84,5 @@ namespace eradev.monstersanctuary.OnlyShowValidMonstersEvolution
                 return false;
             }
         }
-
-
     }
 }

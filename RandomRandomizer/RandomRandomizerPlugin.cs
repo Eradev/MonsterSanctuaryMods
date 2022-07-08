@@ -79,7 +79,6 @@ namespace eradev.monstersanctuary.RandomRandomizer
         [HarmonyPatch(typeof(MonsterEncounter), "Start")]
         private class MonsterEncounterStartPatch
         {
-            // ReSharper disable once InconsistentNaming
             private static void Prefix(ref MonsterEncounter __instance)
             {
                 if (!_randomizeMonstersEnabled.Value)
@@ -131,7 +130,6 @@ namespace eradev.monstersanctuary.RandomRandomizer
         [HarmonyPatch(typeof(Chest), "OpenChest")]
         private class ChestOpenChestPatch
         {
-            // ReSharper disable once InconsistentNaming
             private static void Prefix(ref Chest __instance)
             {
                 if (!_randomizeChestsEnabled.Value)

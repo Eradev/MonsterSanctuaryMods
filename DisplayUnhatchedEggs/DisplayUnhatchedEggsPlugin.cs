@@ -16,11 +16,7 @@ namespace eradev.monstersanctuary.DisplayUnhatchedEggs
         [HarmonyPatch(typeof(Egg), "GetName")]
         private class EggGetNamePatch
         {
-            private static void Postfix(
-                // ReSharper disable once InconsistentNaming
-                ref Egg __instance,
-                // ReSharper disable once InconsistentNaming
-                ref string __result)
+            private static void Postfix(ref Egg __instance, ref string __result)
             {
                 var monster = __instance.Monster.GetComponent<Monster>();
 
