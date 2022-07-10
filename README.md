@@ -24,6 +24,10 @@ Get all unlocked army rewards and multiple eggs donation rewards at once.
 
 Custom level cap for your monsters and enemies.
 
+## Mods Menu
+
+Library that adds a category in the options for mods.
+
 ## Random Randomizer
 
 Randomize random encounters and chests' content in Randomizer mode.

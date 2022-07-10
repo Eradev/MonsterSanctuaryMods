@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
     <AssemblyName>eradev.monstersanctuary.ModsMenu</AssemblyName>
-    <Description>Adds a category in the options for mods.</Description>
+    <Description>Library that adds a category in the options for mods.</Description>
     <Version>1.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>9.0</LangVersion>
