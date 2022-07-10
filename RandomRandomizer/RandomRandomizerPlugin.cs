@@ -155,10 +155,7 @@ namespace eradev.monstersanctuary.RandomRandomizer
                     pluginName,
                     "Chance for gold",
                     () => $"{Math.Round(_goldChance.Value * 100f, 1)}%",
-                    newValue =>
-                    {
-                        _goldChance.Value = (float.Parse(newValue.Replace("%", "")) / 100f).Clamp(0.0f, 1.0f);
-                    },
+                    newValue => _goldChance.Value = (float.Parse(newValue.Replace("%", "")) / 100f).Clamp(0.0f, 1.0f),
                     direction => _goldChance.Value = (_goldChance.Value + direction * 0.01f).Clamp(0.0f, 1.0f),
                     () => ModsMenu.CreateOptionsPercentRange(0.0f, 1.0f, 0.1f),
                     determineDisabledFunc: () => !_isEnabled.Value || !_randomizeChestsEnabled.Value,
@@ -284,7 +281,7 @@ namespace eradev.monstersanctuary.RandomRandomizer
             [UsedImplicitly]
             private static void Prefix(ref MonsterEncounter __instance)
             {
-                if (!_randomizeMonstersEnabled.Value)
+                if (!_isEnabled.Value || !_randomizeMonstersEnabled.Value)
                 {
                     _log.LogDebug("MonsterRandomizer ignore: Disabled in config");
 
@@ -336,7 +333,7 @@ namespace eradev.monstersanctuary.RandomRandomizer
             [UsedImplicitly]
             private static void Prefix(ref Chest __instance)
             {
-                if (!_randomizeChestsEnabled.Value)
+                if (!_isEnabled.Value || !_randomizeChestsEnabled.Value)
                 {
                     _log.LogDebug("ChestRandomizer ignore: Disabled in config");
 
