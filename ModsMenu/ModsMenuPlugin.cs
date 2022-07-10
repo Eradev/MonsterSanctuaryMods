@@ -146,155 +146,7 @@ namespace eradev.monstersanctuary.ModsMenuNS
             }
         }
 
-        [HarmonyPatch(typeof(OptionsMenu), "OnOptionsReachedBounds")]
-        private class OptionsMenuOnOptionsReachedBoundsPatch
-        {
-            /// <summary>
-            /// Go to pagination
-            /// </summary>
-            [UsedImplicitly]
-            private static bool Prefix(ref OptionsMenu __instance, int direction)
-            {
-                if (__instance.CategoryMenu.Lists[__instance.CategoryMenu.CurrentListIndex][0] != _modsCategory ||
-                    !_modsPagination.isActiveAndEnabled ||
-                    direction != -1)
-                {
-                    return true;
-                }
-
-                __instance.BaseOptions.Close();
-                __instance.ValueSlider.gameObject.SetActive(false);
-
-                _modsPagination.Open();
-
-                SFXController.Instance.PlaySFX(SFXController.Instance.SFXMenuNavigate);
-
-                return false;
-            }
-        }
-
-        [HarmonyPatch(typeof(OptionsMenu), "OnFooterSelected")]
-        private class OptionsMenuOnFooterSelectedPatch
-        {
-            /// <summary>
-            /// Reset mods' options to their default value
-            /// </summary>
-            [UsedImplicitly]
-            private static bool Prefix(ref OptionsMenu __instance, MenuListItem menuItem)
-            {
-                if (menuItem != __instance.DefaultsButton ||
-                    __instance.CategoryMenu.Lists[__instance.CategoryMenu.CurrentListIndex][0] != _modsCategory)
-                {
-                    return true;
-                }
-
-                foreach (var option in OptionsMenuHelper.CustomMenuOptions.Where(x => x.SetDefaultValueFunc != null))
-                {
-                    option.SetDefaultValueFunc.Invoke();
-                }
-
-                RefreshPageMethod.Invoke(__instance, null);
-
-                return false;
-            }
-        }
-
-        [HarmonyPatch(typeof(OptionsMenu), "OnFooterReachedBounds")]
-        private class OptionsMenuOnFooterReachedBoundsPatch
-        {
-            /// <summary>
-            /// Go to pagination
-            /// </summary>
-            [UsedImplicitly]
-            private static bool Prefix(ref OptionsMenu __instance, int direction)
-            {
-                if (__instance.CategoryMenu.Lists[__instance.CategoryMenu.CurrentListIndex][0] != _modsCategory ||
-                    direction == -1)
-                {
-                    return true;
-                }
-
-                __instance.FooterMenu.Close();
-
-                if (_modsPagination.isActiveAndEnabled)
-                {
-                    _modsPagination.Open();
-                }
-                else
-                {
-                    if (OptionsMenuHelper.CustomMenuOptions.Count == 0)
-                    {
-                        __instance.CategoryMenu.SetSelecting(true);
-                        __instance.CategoryMenu.SelectList(__instance.CategoryMenu.CurrentListIndex);
-                    }
-                    else
-                    {
-                        __instance.BaseOptions.SetSelecting(true);
-                        __instance.BaseOptions.SelectList(0, itemIndex: 0);
-                    }
-                }
-
-                SFXController.Instance.PlaySFX(SFXController.Instance.SFXMenuNavigate);
-
-                return false;
-            }
-        }
-
-        [HarmonyPatch(typeof(OptionsMenu), "ProcessMouseInput")]
-        private class OptionsMenuProcessMouseInputPatch
-        {
-            [UsedImplicitly]
-            private static bool Prefix(ref OptionsMenu __instance)
-            {
-                if (__instance.CategoryMenu.Lists[__instance.CategoryMenu.CurrentListIndex][0] != _modsCategory ||
-                    !_modsPagination.isActiveAndEnabled)
-                {
-                    return true;
-                }
-
-                CheckMouseMenuSwitchMethod.Invoke(__instance, new object[]
-                {
-                    __instance.CategoryMenu,
-                    __instance.FooterMenu,
-                    __instance.BaseOptions
-                });
-                CheckMouseMenuSwitchMethod.Invoke(__instance, new object[]
-                {
-                    __instance.FooterMenu,
-                    __instance.CategoryMenu,
-                    _modsPagination
-                });
-                CheckMouseMenuSwitchMethod.Invoke(__instance, new object[]
-                {
-                    __instance.BaseOptions,
-                    _modsPagination,
-                    __instance.CategoryMenu
-                });
-                CheckMouseMenuSwitchMethod.Invoke(__instance, new object[]
-                {
-                    _modsPagination,
-                    __instance.FooterMenu,
-                    __instance.BaseOptions
-                });
-
-                if (!__instance.BaseOptions.IsSelecting)
-                {
-                    __instance.ValueSlider.gameObject.SetActive(false);
-                }
-
-                return false;
-            }
-        }
-
-        [HarmonyPatch(typeof(OptionsMenu), "ConfirmInputIssue")]
-        private class OptionsMenuConfirmInputIssuePatch
-        {
-            [UsedImplicitly]
-            private static void Prefix()
-            {
-                _modsPagination.SetLocked(!_modsPagination.IsSelecting);
-            }
-        }
+        #region Category
 
         [HarmonyPatch(typeof(OptionsMenu), "OnCategoryHovered")]
         private class OptionsMenuOnCategoryHoveredPatch
@@ -382,6 +234,10 @@ namespace eradev.monstersanctuary.ModsMenuNS
             }
         }
 
+        #endregion
+
+        #region Options
+
         [HarmonyPatch(typeof(OptionsMenu), "OnOptionsSelected")]
         private class OptionsMenuOnOptionsSelectedPatch
         {
@@ -467,5 +323,165 @@ namespace eradev.monstersanctuary.ModsMenuNS
                 customOption.OnValueChangeFunc?.Invoke(direction);
             }
         }
+
+        [HarmonyPatch(typeof(OptionsMenu), "OnOptionsReachedBounds")]
+        private class OptionsMenuOnOptionsReachedBoundsPatch
+        {
+            /// <summary>
+            /// Go to pagination
+            /// </summary>
+            [UsedImplicitly]
+            private static bool Prefix(ref OptionsMenu __instance, int direction)
+            {
+                if (__instance.CategoryMenu.Lists[__instance.CategoryMenu.CurrentListIndex][0] != _modsCategory ||
+                    !_modsPagination.isActiveAndEnabled ||
+                    direction != -1)
+                {
+                    return true;
+                }
+
+                __instance.BaseOptions.Close();
+                __instance.ValueSlider.gameObject.SetActive(false);
+
+                _modsPagination.Open();
+
+                SFXController.Instance.PlaySFX(SFXController.Instance.SFXMenuNavigate);
+
+                return false;
+            }
+        }
+
+        #endregion
+
+        #region Footer
+
+        [HarmonyPatch(typeof(OptionsMenu), "OnFooterSelected")]
+        private class OptionsMenuOnFooterSelectedPatch
+        {
+            /// <summary>
+            /// Reset mods' options to their default value
+            /// </summary>
+            [UsedImplicitly]
+            private static bool Prefix(ref OptionsMenu __instance, MenuListItem menuItem)
+            {
+                if (menuItem != __instance.DefaultsButton ||
+                    __instance.CategoryMenu.Lists[__instance.CategoryMenu.CurrentListIndex][0] != _modsCategory)
+                {
+                    return true;
+                }
+
+                foreach (var option in OptionsMenuHelper.CustomMenuOptions.Where(x => x.SetDefaultValueFunc != null))
+                {
+                    option.SetDefaultValueFunc.Invoke();
+                }
+
+                RefreshPageMethod.Invoke(__instance, null);
+
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(OptionsMenu), "OnFooterReachedBounds")]
+        private class OptionsMenuOnFooterReachedBoundsPatch
+        {
+            /// <summary>
+            /// Go to pagination
+            /// </summary>
+            [UsedImplicitly]
+            private static bool Prefix(ref OptionsMenu __instance, int direction)
+            {
+                if (__instance.CategoryMenu.Lists[__instance.CategoryMenu.CurrentListIndex][0] != _modsCategory ||
+                    direction == -1)
+                {
+                    return true;
+                }
+
+                __instance.FooterMenu.Close();
+
+                if (_modsPagination.isActiveAndEnabled)
+                {
+                    _modsPagination.Open();
+                }
+                else
+                {
+                    if (OptionsMenuHelper.CustomMenuOptions.Count == 0)
+                    {
+                        __instance.CategoryMenu.SetSelecting(true);
+                        __instance.CategoryMenu.SelectList(__instance.CategoryMenu.CurrentListIndex);
+                    }
+                    else
+                    {
+                        __instance.BaseOptions.SetSelecting(true);
+                        __instance.BaseOptions.SelectList(0, itemIndex: 0);
+                    }
+                }
+
+                SFXController.Instance.PlaySFX(SFXController.Instance.SFXMenuNavigate);
+
+                return false;
+            }
+        }
+
+        #endregion
+
+        #region Navigation fixes
+
+        [HarmonyPatch(typeof(OptionsMenu), "ProcessMouseInput")]
+        private class OptionsMenuProcessMouseInputPatch
+        {
+            [UsedImplicitly]
+            private static bool Prefix(ref OptionsMenu __instance)
+            {
+                if (__instance.CategoryMenu.Lists[__instance.CategoryMenu.CurrentListIndex][0] != _modsCategory ||
+                    !_modsPagination.isActiveAndEnabled)
+                {
+                    return true;
+                }
+
+                CheckMouseMenuSwitchMethod.Invoke(__instance, new object[]
+                {
+                    __instance.CategoryMenu,
+                    __instance.FooterMenu,
+                    __instance.BaseOptions
+                });
+                CheckMouseMenuSwitchMethod.Invoke(__instance, new object[]
+                {
+                    __instance.FooterMenu,
+                    __instance.CategoryMenu,
+                    _modsPagination
+                });
+                CheckMouseMenuSwitchMethod.Invoke(__instance, new object[]
+                {
+                    __instance.BaseOptions,
+                    _modsPagination,
+                    __instance.CategoryMenu
+                });
+                CheckMouseMenuSwitchMethod.Invoke(__instance, new object[]
+                {
+                    _modsPagination,
+                    __instance.FooterMenu,
+                    __instance.BaseOptions
+                });
+
+                if (!__instance.BaseOptions.IsSelecting)
+                {
+                    __instance.ValueSlider.gameObject.SetActive(false);
+                }
+
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(OptionsMenu), "ConfirmInputIssue")]
+        private class OptionsMenuConfirmInputIssuePatch
+        {
+            [UsedImplicitly]
+            private static void Prefix()
+            {
+                _modsPagination.SetLocked(!_modsPagination.IsSelecting);
+            }
+        }
+
+        #endregion
     }
 }
