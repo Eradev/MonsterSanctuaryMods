@@ -156,6 +156,7 @@ namespace eradev.monstersanctuary.ModsMenuNS
             private static bool Prefix(ref OptionsMenu __instance, int direction)
             {
                 if (__instance.CategoryMenu.Lists[__instance.CategoryMenu.CurrentListIndex][0] != _modsCategory ||
+                    !_modsPagination.isActiveAndEnabled ||
                     direction != -1)
                 {
                     return true;
@@ -179,17 +180,22 @@ namespace eradev.monstersanctuary.ModsMenuNS
             /// Reset mods' options to their default value
             /// </summary>
             [UsedImplicitly]
-            private static void Prefix(ref OptionsMenu __instance)
+            private static bool Prefix(ref OptionsMenu __instance, MenuListItem menuItem)
             {
-                if (__instance.CategoryMenu.Lists[__instance.CategoryMenu.CurrentListIndex][0] != _modsCategory)
+                if (menuItem != __instance.DefaultsButton ||
+                    __instance.CategoryMenu.Lists[__instance.CategoryMenu.CurrentListIndex][0] != _modsCategory)
                 {
-                    return;
+                    return true;
                 }
 
                 foreach (var option in OptionsMenuHelper.CustomMenuOptions.Where(x => x.SetDefaultValueFunc != null))
                 {
                     option.SetDefaultValueFunc.Invoke();
                 }
+
+                RefreshPageMethod.Invoke(__instance, null);
+
+                return false;
             }
         }
 
@@ -210,8 +216,23 @@ namespace eradev.monstersanctuary.ModsMenuNS
 
                 __instance.FooterMenu.Close();
 
-                _modsPagination.SetSelecting(true);
-                _modsPagination.SelectList(_modsPagination.CurrentIndex);
+                if (_modsPagination.isActiveAndEnabled)
+                {
+                    _modsPagination.Open();
+                }
+                else
+                {
+                    if (OptionsMenuHelper.CustomMenuOptions.Count == 0)
+                    {
+                        __instance.CategoryMenu.SetSelecting(true);
+                        __instance.CategoryMenu.SelectList(__instance.CategoryMenu.CurrentListIndex);
+                    }
+                    else
+                    {
+                        __instance.BaseOptions.SetSelecting(true);
+                        __instance.BaseOptions.SelectList(0, itemIndex: 0);
+                    }
+                }
 
                 SFXController.Instance.PlaySFX(SFXController.Instance.SFXMenuNavigate);
 
@@ -225,7 +246,8 @@ namespace eradev.monstersanctuary.ModsMenuNS
             [UsedImplicitly]
             private static bool Prefix(ref OptionsMenu __instance)
             {
-                if (__instance.CategoryMenu.Lists[__instance.CategoryMenu.CurrentListIndex][0] != _modsCategory)
+                if (__instance.CategoryMenu.Lists[__instance.CategoryMenu.CurrentListIndex][0] != _modsCategory ||
+                    !_modsPagination.isActiveAndEnabled)
                 {
                     return true;
                 }
@@ -322,6 +344,39 @@ namespace eradev.monstersanctuary.ModsMenuNS
                 __instance.BaseOptions.UpdateItemPositions(false);
 
                 __instance.InputButtonRoot.SetActive(false);
+
+                return false;
+            }
+        }
+
+        [HarmonyPatch(typeof(OptionsMenu), "OnCategoryReachedBounds")]
+        private class OptionsMenuOnCategoryReachedBoundsPatch
+        {
+            /// <summary>
+            /// Skip options when none present
+            /// </summary>
+            [UsedImplicitly]
+            // ReSharper disable once IdentifierTypo
+            private static bool Prefix(ref OptionsMenu __instance, int direction)
+            {
+                if (__instance.CategoryMenu.Lists[__instance.CategoryMenu.CurrentListIndex][0] != _modsCategory)
+                {
+                    return true;
+                }
+
+                __instance.CategoryMenu.Close();
+
+                if (direction == -1 && OptionsMenuHelper.CustomMenuOptions.Count > 0)
+                {
+                    __instance.BaseOptions.SetSelecting(true);
+                    __instance.BaseOptions.SelectList(0, itemIndex: 0);
+                }
+                else
+                {
+                    __instance.FooterMenu.Open();
+                }
+
+                SFXController.Instance.PlaySFX(SFXController.Instance.SFXMenuNavigate);
 
                 return false;
             }

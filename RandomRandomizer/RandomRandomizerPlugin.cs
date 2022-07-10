@@ -13,7 +13,7 @@ using Random = UnityEngine.Random;
 
 namespace eradev.monstersanctuary.RandomRandomizer
 {
-    [BepInDependency("eradev.monstersanctuary.MenuMod")]
+    [BepInDependency("eradev.monstersanctuary.ModsMenu")]
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     public class RandomRandomizerPlugin : BaseUnityPlugin
     {
