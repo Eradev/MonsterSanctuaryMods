@@ -26,22 +26,22 @@ namespace eradev.monstersanctuary.ModsMenuNS.OptionMenu
         public CustomMenuOption(
             string modName,
             string name,
-            bool disabledInGameMenu,
             Func<string> displayValueFunc,
-            Action<string> onValueSelectFunc,
             Action<int> onValueChangeFunc,
             Func<List<string>> possibleValuesFunc,
+            Action<string> onValueSelectFunc,
             Func<bool> determineDisabledFunc,
+            bool disabledInGameMenu,
             Action setDefaultValueFunc)
         {
             ModName = modName;
             Name = name;
-            DisabledInGameMenu = disabledInGameMenu;
             DisplayValueFunc = displayValueFunc;
             OnValueSelectFunc = onValueSelectFunc;
             OnValueChangeFunc = onValueChangeFunc;
             PossibleValuesFunc = possibleValuesFunc;
             DetermineDisabledFunc = determineDisabledFunc;
+            DisabledInGameMenu = disabledInGameMenu;
             SetDefaultValueFunc = setDefaultValueFunc;
         }
 

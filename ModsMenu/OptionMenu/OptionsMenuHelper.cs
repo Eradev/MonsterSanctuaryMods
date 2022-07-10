@@ -12,11 +12,11 @@ namespace eradev.monstersanctuary.ModsMenuNS.OptionMenu
             string modName,
             string optionName,
             Func<string> displayValueFunc,
-            Action<string> onValueSelectFunc = null,
             Action<int> onValueChangeFunc = null,
             Func<List<string>> possibleValuesFunc = null,
-            bool disabledInGameMenu = false,
+            Action<string> onValueSelectFunc = null,
             Func<bool> determineDisabledFunc = null,
+            bool disabledInGameMenu = false,
             Action setDefaultValueFunc = null)
         {
             if (string.IsNullOrWhiteSpace(modName))
@@ -38,12 +38,12 @@ namespace eradev.monstersanctuary.ModsMenuNS.OptionMenu
             CustomMenuOptions.Add(new CustomMenuOption(
                 modName,
                 optionName,
-                disabledInGameMenu,
                 displayValueFunc,
-                onValueSelectFunc,
                 onValueChangeFunc,
                 possibleValuesFunc,
+                onValueSelectFunc,
                 determineDisabledFunc,
+                disabledInGameMenu,
                 setDefaultValueFunc));
 
             ModsMenu.LogDebug($"Added option \"{optionKey}\".");

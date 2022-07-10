@@ -44,7 +44,7 @@ namespace eradev.monstersanctuary.LevelCaps
                     PluginInfo.PLUGIN_NAME,
                     "Enabled",
                     () => $"{_isEnabled.Value}",
-                    onValueChangeFunc: _ =>
+                    _ =>
                     {
                         _isEnabled.Value = !_isEnabled.Value;
 
@@ -56,12 +56,6 @@ namespace eradev.monstersanctuary.LevelCaps
                     PluginInfo.PLUGIN_NAME,
                     "Level Cap (self)",
                     () => $"{_maxLevelSelf.Value}",
-                    newValue =>
-                    {
-                        _maxLevelSelf.Value = int.Parse(newValue);
-
-                        SetLevelCap();
-                    },
                     direction =>
                     {
                         _maxLevelSelf.Value = (_maxLevelSelf.Value + direction).Clamp(1, 99);
@@ -69,17 +63,23 @@ namespace eradev.monstersanctuary.LevelCaps
                         SetLevelCap();
                     },
                     () => ModsMenu.CreateOptionsIntRange(1, 99, 10),
-                    determineDisabledFunc: () => !_isEnabled.Value,
+                    newValue =>
+                    {
+                        _maxLevelSelf.Value = int.Parse(newValue);
+
+                        SetLevelCap();
+                    },
+                    () => !_isEnabled.Value,
                     setDefaultValueFunc: () => _maxLevelSelf.Value = MaxLevelSelfDefault);
 
                 ModsMenu.TryAddOption(
                     PluginInfo.PLUGIN_NAME,
                     "Level Cap (enemies)",
                     () => $"{_maxLevelEnemy.Value}",
-                    newValue => _maxLevelEnemy.Value = int.Parse(newValue),
                     direction => _maxLevelEnemy.Value = (_maxLevelEnemy.Value + direction).Clamp(1, 99),
                     () => ModsMenu.CreateOptionsIntRange(1, 99, 10),
-                    determineDisabledFunc: () => !_isEnabled.Value,
+                    newValue => _maxLevelEnemy.Value = int.Parse(newValue),
+                    () => !_isEnabled.Value,
                     setDefaultValueFunc: () => _maxLevelEnemy.Value = MaxLevelEnemyDefault);
             };
 

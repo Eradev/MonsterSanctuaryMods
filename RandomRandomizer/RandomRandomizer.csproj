@@ -4,7 +4,7 @@
     <TargetFramework>net471</TargetFramework>
     <AssemblyName>eradev.monstersanctuary.RandomRandomizer</AssemblyName>
     <Description>Randomize random encounters and chests' content in Randomizer mode.</Description>
-    <Version>1.1.1</Version>
+    <Version>1.1.2</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>9.0</LangVersion>
     <RootNamespace>eradev.monstersanctuary.RandomRandomizer</RootNamespace>
