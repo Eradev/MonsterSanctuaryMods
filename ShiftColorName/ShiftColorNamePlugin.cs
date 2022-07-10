@@ -2,6 +2,7 @@
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace eradev.monstersanctuary.ShiftColorName
@@ -9,8 +10,10 @@ namespace eradev.monstersanctuary.ShiftColorName
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     public class ShiftColorNamePlugin : BaseUnityPlugin
     {
+        // ReSharper disable once NotAccessedField.Local
         private static ManualLogSource _log;
 
+        [UsedImplicitly]
         private void Awake()
         {
             _log = Logger;
@@ -23,6 +26,7 @@ namespace eradev.monstersanctuary.ShiftColorName
         [HarmonyPatch(typeof(MonsterSummary), "SetMonster")]
         private class MonsterSummarySetMonsterPatch
         {
+            [UsedImplicitly]
             private static void Postfix(ref MonsterSummary __instance)
             {
                 var monster = __instance.Monster;
@@ -31,9 +35,6 @@ namespace eradev.monstersanctuary.ShiftColorName
                 {
                     return;
                 }
-
-                _log.LogDebug($"MonsterSummary.SetMonster :: {monster.GetName()} ({monster.Shift})");
-                _log.LogDebug($"    Before: {__instance.Name.color.ToHtmlRGBA()}");
 
                 var shiftColor = monster.Shift switch
                 {
@@ -46,16 +47,14 @@ namespace eradev.monstersanctuary.ShiftColorName
                 __instance.Name.color = shiftColor;
 
                 ColorTweenOverwriter.Add(__instance.Name.gameObject);
-
-                _log.LogDebug($"    After: {__instance.Name.color.ToHtmlRGBA()}");
             }
         }
 
         [HarmonyPatch(typeof(ColorTween), "EndTween", typeof(bool), typeof(bool))]
         private class ColorTweenEndTweenPatch
         {
+            [UsedImplicitly]
             private static void Prefix(
-                // ReSharper disable once InconsistentNaming
                 ref ColorTween __instance,
                 ref bool resetColor)
             {
@@ -73,14 +72,12 @@ namespace eradev.monstersanctuary.ShiftColorName
         [HarmonyPatch(typeof(MonsterArmyMenu), "ShowDonateMonsterMenuItem")]
         private class MonsterArmyMenuShowDonateMonsterMenuItemPatch
         {
+            [UsedImplicitly]
             private static void Postfix(
                 IMenuListDisplayable displayable,
                 MenuListItem menuItem)
             {
                 var monster = (Monster)displayable;
-
-                _log.LogDebug($"MonsterArmyMenu.ShowDonateMonsterMenuItem :: {monster.GetName()} ({monster.Shift})");
-                _log.LogDebug($"    Before: {menuItem.TextColorOverride.ToHtmlRGBA()}");
 
                 menuItem.TextColorOverride = monster.Shift switch
                 {
@@ -89,8 +86,6 @@ namespace eradev.monstersanctuary.ShiftColorName
                     EShift.Dark => GameDefines.ColorDarkShift,
                     _ => throw new ArgumentOutOfRangeException()
                 };
-
-                _log.LogDebug($"    After: {menuItem.TextColorOverride.ToHtmlRGBA()}");
             }
         }
     }

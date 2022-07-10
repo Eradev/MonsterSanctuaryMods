@@ -1,11 +1,13 @@
 ﻿using BepInEx;
 using HarmonyLib;
+using JetBrains.Annotations;
 
 namespace eradev.monstersanctuary.DisplayUnhatchedEggs
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     public class DisplayUnhatchedEggsPlugin : BaseUnityPlugin
     {
+        [UsedImplicitly]
         private void Awake()
         {
             new Harmony(PluginInfo.PLUGIN_GUID).PatchAll();
@@ -16,6 +18,7 @@ namespace eradev.monstersanctuary.DisplayUnhatchedEggs
         [HarmonyPatch(typeof(Egg), "GetName")]
         private class EggGetNamePatch
         {
+            [UsedImplicitly]
             private static void Postfix(ref Egg __instance, ref string __result)
             {
                 var monster = __instance.Monster.GetComponent<Monster>();

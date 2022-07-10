@@ -2,15 +2,14 @@
 
   <PropertyGroup>
     <TargetFramework>net471</TargetFramework>
-    <AssemblyName>eradev.monstersanctuary.RandomRandomizer</AssemblyName>
-    <Description>Randomize random encounters and chests' content in Randomizer mode.</Description>
-    <Version>1.1.0</Version>
+    <AssemblyName>eradev.monstersanctuary.ModsMenu</AssemblyName>
+    <Description>Adds a category in the options for mods.</Description>
+    <Version>1.0.0</Version>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>9.0</LangVersion>
-    <RootNamespace>eradev.monstersanctuary.RandomRandomizer</RootNamespace>
-    <PackageId>eradev.monstersanctuary.RandomRandomizer</PackageId>
+    <RootNamespace>eradev.monstersanctuary.ModsMenuNS</RootNamespace>
     <Authors>eradev</Authors>
-    <Product>Random Randomizer</Product>
+    <Product>Mods Menu</Product>
   </PropertyGroup>
 
   <ItemGroup>
@@ -22,10 +21,6 @@
   
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
     <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
-  </ItemGroup>
-  
-  <ItemGroup>
-    <ProjectReference Include="..\ModsMenu\ModsMenu.csproj" />
   </ItemGroup>
   
   <ItemGroup>

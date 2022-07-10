@@ -24,8 +24,16 @@
   </ItemGroup>
   
   <ItemGroup>
+    <ProjectReference Include="..\ModsMenu\ModsMenu.csproj" />
+  </ItemGroup>
+  
+  <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>S:\SteamLibrary\steamapps\common\Monster Sanctuary\Monster Sanctuary_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
   </ItemGroup>
+  
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Exec Command="copy /Y &quot;$(TargetPath)&quot; &quot;S:\SteamLibrary\steamapps\common\Monster Sanctuary\BepInEx\plugins\$(TargetFileName)&quot;" />
+  </Target>
 </Project>

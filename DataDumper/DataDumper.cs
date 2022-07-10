@@ -5,14 +5,17 @@ using System.Text.RegularExpressions;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using JetBrains.Annotations;
 
 namespace eradev.monstersanctuary.DataDumper
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     public class DataDumper : BaseUnityPlugin
     {
+        // ReSharper disable once NotAccessedField.Local
         private static ManualLogSource _log;
 
+        [UsedImplicitly]
         private void Awake()
         {
             _log = Logger;
@@ -119,8 +122,8 @@ namespace eradev.monstersanctuary.DataDumper
         [HarmonyPatch(typeof(GameModeManager), "LoadGame")]
         private class GameModeManagerLoadGamePatch
         {
-            // ReSharper disable once InconsistentNaming
-            private static void Postfix(ref GameModeManager __instance)
+            [UsedImplicitly]
+            private static void Postfix()
             {
                 DumpMapData();
                 DumpItemsData();

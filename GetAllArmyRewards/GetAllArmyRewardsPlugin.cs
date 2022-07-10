@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Drawing.Text;
 using System.Linq;
 using BepInEx;
 using BepInEx.Logging;
 using HarmonyLib;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace eradev.monstersanctuary.GetAllArmyRewards
@@ -19,6 +19,7 @@ namespace eradev.monstersanctuary.GetAllArmyRewards
         private static int _gold;
         private static bool _isEggDonation;
 
+        [UsedImplicitly]
         private void Awake()
         {
             _log = Logger;
@@ -69,6 +70,7 @@ namespace eradev.monstersanctuary.GetAllArmyRewards
         [HarmonyPatch(typeof(MonsterArmyMenu), "CheckReward")]
         private class MonsterArmyMenuCheckRewardPatch
         {
+            [UsedImplicitly]
             private static bool Prefix(
                 ref MonsterArmyMenu __instance,
                 int ___armyStrength,
@@ -145,6 +147,7 @@ namespace eradev.monstersanctuary.GetAllArmyRewards
         [HarmonyPatch(typeof(MonsterArmyMenu), "ConfirmDonateEggDialogue")]
         private class MonsterArmyMenuConfirmDonateEggDialoguePatch
         {
+            [UsedImplicitly]
             private static bool Prefix(
                 ref MonsterArmyMenu __instance,
                 bool ___donateMultipleEggMode)

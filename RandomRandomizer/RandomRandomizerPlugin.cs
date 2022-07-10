@@ -1,13 +1,19 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using eradev.monstersanctuary.ModsMenuNS;
+using eradev.monstersanctuary.ModsMenuNS.Extensions;
 using HarmonyLib;
+using JetBrains.Annotations;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 namespace eradev.monstersanctuary.RandomRandomizer
 {
+    [BepInDependency("eradev.monstersanctuary.SharedLib")]
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     public class RandomRandomizerPlugin : BaseUnityPlugin
     {
@@ -15,6 +21,9 @@ namespace eradev.monstersanctuary.RandomRandomizer
         private static ManualLogSource _log;
 
         private static List<GameObject> _possibleItemsList;
+
+        private const bool IsEnabledDefault = true;
+        private static ConfigEntry<bool> _isEnabled;
 
         private const bool RandomizedMonstersEnabledDefault = true;
         private const string MonstersBlacklistDefault = "228,317,348,361,1879"; // Spectral (228,317,348,361), Bard (1879)
@@ -28,8 +37,8 @@ namespace eradev.monstersanctuary.RandomRandomizer
         private const int MaxGoldDefault = 50;
         private const string ItemsBlacklistDefault = "1792,1793,1794,1795,1796,1797"; // Eternity Flame (1792~1797)
         private const int Tier3LevelUnlockDefault = 10;
-        private const int Tier4LevelUnlockDefault = 20;
-        private const int Tier5LevelUnlockDefault = 30;
+        private const int Tier4LevelUnlockDefault = 15;
+        private const int Tier5LevelUnlockDefault = 20;
         private const bool DisableCatalystsDefault = true;
         private const bool DisableEggsDefault = true;
 
@@ -44,8 +53,13 @@ namespace eradev.monstersanctuary.RandomRandomizer
         private static ConfigEntry<bool> _disableCatalysts;
         private static ConfigEntry<bool> _disableEggs;
 
+        [UsedImplicitly]
         private void Awake()
         {
+            _log = Logger;
+
+            _isEnabled = Config.Bind("General", "Enable", IsEnabledDefault, "Enable the mod");
+
             _randomizeMonstersEnabled = Config.Bind("Randomized Monsters", "Enabled", RandomizedMonstersEnabledDefault, "Randomize monsters");
             _monstersBlacklist = Config.Bind("Randomized Monsters", "Blacklist", MonstersBlacklistDefault, "Blacklisted monsters ID");
 
@@ -60,7 +74,7 @@ namespace eradev.monstersanctuary.RandomRandomizer
             _disableCatalysts = Config.Bind("Randomized Chests", "Disable Catalysts", DisableCatalystsDefault, "Removes Catalysts from chests");
             _disableEggs = Config.Bind("Randomized Chests", "Disable Eggs", DisableEggsDefault, "Removes Eggs from chests");
 
-            // Ensure minGold is always higher than 0.
+            // Ensure values are correct
             if (_minGold.Value == 0)
             {
                 _minGold.Value = MinGoldDefault;
@@ -68,7 +82,6 @@ namespace eradev.monstersanctuary.RandomRandomizer
                 Logger.LogInfo("The minimum gold value has been reset.");
             }
 
-            // Ensure maxGold is always higher than 0.
             if (_maxGold.Value == 0)
             {
                 _maxGold.Value = MaxGoldDefault;
@@ -76,7 +89,6 @@ namespace eradev.monstersanctuary.RandomRandomizer
                 Logger.LogInfo("The maximum gold value has been reset.");
             }
 
-            // Swap values if incorrect
             if (_maxGold.Value < _minGold.Value)
             {
                 (_maxGold.Value, _minGold.Value) = (_minGold.Value, _maxGold.Value);
@@ -84,7 +96,140 @@ namespace eradev.monstersanctuary.RandomRandomizer
                 Logger.LogInfo("The minimum and maximum gold values have been swapped.");
             }
 
-            _log = Logger;
+            _goldChance.Value = _goldChance.Value.Clamp(0.01f, 1.0f);
+
+            const string pluginName = "RRandomizer";
+
+            ModsMenu.RegisterOptionsEvt += (_, _) =>
+            {
+                ModsMenu.TryAddOption(
+                    pluginName,
+                    "Enabled",
+                    () => $"{_isEnabled.Value}",
+                    onValueChangeFunc: _ => _isEnabled.Value = !_isEnabled.Value,
+                    setDefaultValueFunc: () => _isEnabled.Value = IsEnabledDefault);
+
+                ModsMenu.TryAddOption(
+                    pluginName,
+                    "Randomize monsters",
+                    () => $"{_randomizeMonstersEnabled.Value}",
+                    onValueChangeFunc: _ => _randomizeMonstersEnabled.Value = !_randomizeMonstersEnabled.Value,
+                    determineDisabledFunc: () => !_isEnabled.Value,
+                    setDefaultValueFunc: () => _randomizeMonstersEnabled.Value = RandomizedMonstersEnabledDefault);
+
+                ModsMenu.TryAddOption(
+                    pluginName,
+                    "Randomize chests",
+                    () => $"{_randomizeChestsEnabled.Value}",
+                    onValueChangeFunc: _ => _randomizeChestsEnabled.Value = !_randomizeChestsEnabled.Value,
+                    determineDisabledFunc: () => !_isEnabled.Value,
+                    setDefaultValueFunc: () => _randomizeChestsEnabled.Value = RandomizedChestsEnabledDefault);
+
+                ModsMenu.TryAddOption(
+                    pluginName,
+                    "Disable catalysts",
+                    () => $"{_disableCatalysts.Value}",
+                    onValueChangeFunc: _ =>
+                    {
+                        _disableCatalysts.Value = !_disableCatalysts.Value;
+
+                        _possibleItemsList = null;
+                    },
+                    determineDisabledFunc: () => !_isEnabled.Value || !_randomizeChestsEnabled.Value,
+                    setDefaultValueFunc: () => _disableCatalysts.Value = DisableCatalystsDefault);
+
+                ModsMenu.TryAddOption(
+                    pluginName,
+                    "Disable eggs",
+                    () => $"{_disableEggs.Value}",
+                    onValueChangeFunc: _ =>
+                    {
+                        _disableEggs.Value = !_disableEggs.Value;
+
+                        _possibleItemsList = null;
+                    },
+                    determineDisabledFunc: () => !_isEnabled.Value || !_randomizeChestsEnabled.Value,
+                    setDefaultValueFunc: () => _disableEggs.Value = DisableEggsDefault);
+
+                ModsMenu.TryAddOption(
+                    pluginName,
+                    "Chance for gold",
+                    () => $"{Math.Round(_goldChance.Value * 100f, 1)}%",
+                    newValue =>
+                    {
+                        _goldChance.Value = (float.Parse(newValue.Replace("%", "")) / 100f).Clamp(0.0f, 1.0f);
+                    },
+                    direction => _goldChance.Value = (_goldChance.Value + direction * 0.01f).Clamp(0.0f, 1.0f),
+                    () => ModsMenu.CreateOptionsPercentRange(0.0f, 1.0f, 0.1f),
+                    determineDisabledFunc: () => !_isEnabled.Value || !_randomizeChestsEnabled.Value,
+                    setDefaultValueFunc: () => _goldChance.Value = GoldChanceDefault);
+
+                ModsMenu.TryAddOption(
+                    pluginName,
+                    "Minimum gold",
+                    () => $"{_minGold.Value * 100}",
+                    newValue =>
+                    {
+                        _minGold.Value = (int.Parse(newValue) / 100).Clamp(1, int.MaxValue / 100);
+
+                        if (_maxGold.Value < _minGold.Value)
+                        {
+                            _maxGold.Value = _minGold.Value;
+                        }
+                    },
+                    direction =>
+                    {
+                        _minGold.Value = (_minGold.Value + direction).Clamp(1, int.MaxValue / 100);
+
+                        if (_maxGold.Value < _minGold.Value)
+                        {
+                            _maxGold.Value = _minGold.Value;
+                        }
+                    },
+                    () => ModsMenu.CreateOptionsIntRange(100, 10000, 1000),
+                    determineDisabledFunc: () => !_isEnabled.Value || !_randomizeChestsEnabled.Value,
+                    setDefaultValueFunc: () => _minGold.Value = MinGoldDefault);
+
+                ModsMenu.TryAddOption(
+                    pluginName,
+                    "Maximum gold",
+                    () => $"{_maxGold.Value * 100}",
+                    newValue => _maxGold.Value = (int.Parse(newValue) / 100).Clamp(_minGold.Value, int.MaxValue / 100),
+                    direction => _maxGold.Value = (_maxGold.Value + direction).Clamp(_minGold.Value, int.MaxValue / 100),
+                    () => ModsMenu.CreateOptionsIntRange(_minGold.Value, 10000, 1000),
+                    determineDisabledFunc: () => !_isEnabled.Value || !_randomizeChestsEnabled.Value,
+                    setDefaultValueFunc: () => _maxGold.Value = MaxGoldDefault);
+
+                ModsMenu.TryAddOption(
+                    pluginName,
+                    "+3 item unlock level",
+                    () => $"{_tier3LevelUnlock.Value}",
+                    newValue => _tier3LevelUnlock.Value = int.Parse(newValue).Clamp(0, GameController.LevelCap),
+                    direction => _tier3LevelUnlock.Value = (_tier3LevelUnlock.Value + direction).Clamp(1, GameController.LevelCap),
+                    () => ModsMenu.CreateOptionsIntRange(1, GameController.LevelCap, 5),
+                    determineDisabledFunc: () => !_isEnabled.Value || !_randomizeChestsEnabled.Value,
+                    setDefaultValueFunc: () => _tier3LevelUnlock.Value = Tier3LevelUnlockDefault);
+
+                ModsMenu.TryAddOption(
+                    pluginName,
+                    "+4 item unlock level",
+                    () => $"{_tier4LevelUnlock.Value}",
+                    newValue => _tier4LevelUnlock.Value = int.Parse(newValue).Clamp(0, GameController.LevelCap),
+                    direction => _tier4LevelUnlock.Value = (_tier4LevelUnlock.Value + direction).Clamp(1, GameController.LevelCap),
+                    () => ModsMenu.CreateOptionsIntRange(1, GameController.LevelCap, 5),
+                    determineDisabledFunc: () => !_isEnabled.Value || !_randomizeChestsEnabled.Value,
+                    setDefaultValueFunc: () => _tier4LevelUnlock.Value = Tier4LevelUnlockDefault);
+
+                ModsMenu.TryAddOption(
+                    pluginName,
+                    "+5 item unlock level",
+                    () => $"{_tier5LevelUnlock.Value}",
+                    newValue => _tier5LevelUnlock.Value = int.Parse(newValue).Clamp(0, GameController.LevelCap),
+                    direction => _tier5LevelUnlock.Value = (_tier5LevelUnlock.Value + direction).Clamp(1, GameController.LevelCap),
+                    () => ModsMenu.CreateOptionsIntRange(1, GameController.LevelCap, 5),
+                    determineDisabledFunc: () => !_isEnabled.Value || !_randomizeChestsEnabled.Value,
+                    setDefaultValueFunc: () => _tier5LevelUnlock.Value = Tier5LevelUnlockDefault);
+            };
 
             new Harmony(PluginInfo.PLUGIN_GUID).PatchAll();
 
@@ -136,6 +281,7 @@ namespace eradev.monstersanctuary.RandomRandomizer
         [HarmonyPatch(typeof(MonsterEncounter), "Start")]
         private class MonsterEncounterStartPatch
         {
+            [UsedImplicitly]
             private static void Prefix(ref MonsterEncounter __instance)
             {
                 if (!_randomizeMonstersEnabled.Value)
@@ -187,6 +333,7 @@ namespace eradev.monstersanctuary.RandomRandomizer
         [HarmonyPatch(typeof(Chest), "OpenChest")]
         private class ChestOpenChestPatch
         {
+            [UsedImplicitly]
             private static void Prefix(ref Chest __instance)
             {
                 if (!_randomizeChestsEnabled.Value)

@@ -2,12 +2,14 @@
 using System.Linq;
 using BepInEx;
 using HarmonyLib;
+using JetBrains.Annotations;
 
 namespace eradev.monstersanctuary.DisplayValidMonstersEvolution
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     public class DisplayValidMonstersEvolutionPlugin : BaseUnityPlugin
     {
+        [UsedImplicitly]
         private void Awake()
         {
             new Harmony(PluginInfo.PLUGIN_GUID).PatchAll();
@@ -23,6 +25,7 @@ namespace eradev.monstersanctuary.DisplayValidMonstersEvolution
         [HarmonyPatch(typeof(MonsterSelector), "UpdatePages")]
         private class MonsterSelectorUpdatePagesPatch
         {
+            [UsedImplicitly]
             private static bool Prefix(ref MonsterSelector __instance, ref int ___totalPages)
             {
                 if (__instance.CurrentSelectType != MonsterSelector.MonsterSelectType.SelectEvolveTarget)
@@ -48,6 +51,7 @@ namespace eradev.monstersanctuary.DisplayValidMonstersEvolution
         [HarmonyPatch(typeof(MonsterSelector), "ShowMonsters")]
         private class MonsterSelectorShowMonstersPatch
         {
+            [UsedImplicitly]
             private static bool Prefix(ref MonsterSelector __instance, int ___currentPage, int ___totalPages)
             {
                 if (__instance.CurrentSelectType != MonsterSelector.MonsterSelectType.SelectEvolveTarget)
