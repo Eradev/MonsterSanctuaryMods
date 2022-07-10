@@ -9,7 +9,7 @@ using JetBrains.Annotations;
 
 namespace eradev.monstersanctuary.LevelCaps
 {
-    [BepInDependency("eradev.monstersanctuary.SharedLib")]
+    [BepInDependency("eradev.monstersanctuary.MenuMod")]
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
     public class LevelCapsPlugin : BaseUnityPlugin
     {
