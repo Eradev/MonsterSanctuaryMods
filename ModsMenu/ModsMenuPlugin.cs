@@ -13,7 +13,6 @@ using Object = UnityEngine.Object;
 namespace eradev.monstersanctuary.ModsMenuNS
 {
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-    [BepInIncompatibility("evaisa.MonSancAPI")]
     public class ModsMenuPlugin : BaseUnityPlugin
     {
         private static OptionsMenu _optionsMenu;
@@ -28,9 +27,9 @@ namespace eradev.monstersanctuary.ModsMenuNS
         private static int _currentPageIndex;
 
         private static readonly MethodInfo AddOptionMethod = AccessTools.Method(typeof(OptionsMenu), "AddOption");
+        private static readonly MethodInfo CheckMouseMenuSwitchMethod = AccessTools.Method(typeof(OptionsMenu), "CheckMouseMenuSwitch");
         private static readonly MethodInfo ClearOptionsMethod = AccessTools.Method(typeof(OptionsMenu), "ClearOptions");
         private static readonly MethodInfo OpenOptionPopupMethod = AccessTools.Method(typeof(OptionsMenu), "OpenOptionPopup");
-        private static readonly MethodInfo CheckMouseMenuSwitchMethod = AccessTools.Method(typeof(OptionsMenu), "CheckMouseMenuSwitch");
         private static readonly MethodInfo RefreshPageMethod = AccessTools.Method(typeof(OptionsMenu), "RefreshPage");
 
         [UsedImplicitly]
@@ -90,9 +89,16 @@ namespace eradev.monstersanctuary.ModsMenuNS
             _modsPagination.AddMenuItem(_nextButton);
             _modsPagination.AddMenuItem(_previousButton);
 
-            _modsPagination.OnSelectionCancelled = () => _modsPagination.Close();
+            _modsPagination.OnSelectionCancelled = OnPaginationSelectionCancelled;
             _modsPagination.OnItemSelected = OnPaginationSelected;
             _modsPagination.OnReachedBounds = OnPaginationReachBounds;
+        }
+
+        private static void OnPaginationSelectionCancelled()
+        {
+            _modsPagination.Close();
+            _optionsMenu.BaseOptions.SetSelecting(true);
+            _optionsMenu.BaseOptions.SelectList(0, itemIndex: _optionsMenu.BaseOptions.GetItemCountInList(0) - 1);
         }
 
         private static void OnPaginationReachBounds(int direction)
@@ -106,7 +112,7 @@ namespace eradev.monstersanctuary.ModsMenuNS
             else
             {
                 _optionsMenu.BaseOptions.SetSelecting(true);
-                _optionsMenu.BaseOptions.SelectList(0, itemIndex: (_optionsMenu.BaseOptions.GetItemCountInList(0) - 1));
+                _optionsMenu.BaseOptions.SelectList(0, itemIndex: _optionsMenu.BaseOptions.GetItemCountInList(0) - 1);
             }
 
             SFXController.Instance.PlaySFX(SFXController.Instance.SFXMenuNavigate);
@@ -479,6 +485,16 @@ namespace eradev.monstersanctuary.ModsMenuNS
             private static void Prefix()
             {
                 _modsPagination.SetLocked(!_modsPagination.IsSelecting);
+            }
+        }
+
+        [HarmonyPatch(typeof(OptionsMenu), "Close")]
+        private class OptionsMenuClosePatch
+        {
+            [UsedImplicitly]
+            private static void Prefix()
+            {
+                _modsPagination.SetSelecting(false);
             }
         }
 
