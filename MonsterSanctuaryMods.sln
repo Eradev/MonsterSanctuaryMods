@@ -19,6 +19,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LevelCaps", "LevelCaps\Leve
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ModsMenu", "ModsMenu\ModsMenu.csproj", "{57553F05-C082-4787-913A-7049FD5B6206}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "StartButtonConfirm", "StartButtonConfirm\StartButtonConfirm.csproj", "{19EFBE7A-88EE-444C-94F2-683D0556EE9F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NGPlusOptions", "NGPlusOptions\NGPlusOptions.csproj", "{238CD262-DE53-4916-8408-2ECBE5E8AD02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,6 +61,14 @@ Global
 		{57553F05-C082-4787-913A-7049FD5B6206}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{57553F05-C082-4787-913A-7049FD5B6206}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{57553F05-C082-4787-913A-7049FD5B6206}.Release|Any CPU.Build.0 = Release|Any CPU
+		{19EFBE7A-88EE-444C-94F2-683D0556EE9F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{19EFBE7A-88EE-444C-94F2-683D0556EE9F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{19EFBE7A-88EE-444C-94F2-683D0556EE9F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{19EFBE7A-88EE-444C-94F2-683D0556EE9F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{238CD262-DE53-4916-8408-2ECBE5E8AD02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{238CD262-DE53-4916-8408-2ECBE5E8AD02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{238CD262-DE53-4916-8408-2ECBE5E8AD02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{238CD262-DE53-4916-8408-2ECBE5E8AD02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
