@@ -28,6 +28,10 @@ Custom level cap for your monsters and enemies.
 
 Library that adds a category in the options for mods.
 
+## NG+ Options
+
+Various options when starting a New Game+
+
 ## Random Randomizer
 
 Randomize random encounters and chests' content in Randomizer mode.
