@@ -47,7 +47,7 @@ namespace eradev.monstersanctuary.NGPlusOptions
             {
                 PopupController.Instance.ShowMessage(
                     Utils.LOCA("NG+ Options"),
-                    Utils.LOCA("All monsters have unshifted."),
+                    Utils.LOCA("All monsters have been unshifted."),
                     AskSellEquipment);
             });
         }
@@ -56,7 +56,7 @@ namespace eradev.monstersanctuary.NGPlusOptions
         {
             PopupController.Instance.ShowRequest(
                 Utils.LOCA("NG+ Options"),
-                Utils.LOCA("Sell all your equipment?"),
+                Utils.LOCA("Sell all weapons and accessories?"),
                 ConfirmSellEquipment,
                 CompleteNGPlusOptions,
                 true
@@ -79,7 +79,7 @@ namespace eradev.monstersanctuary.NGPlusOptions
             {
                 PopupController.Instance.ShowMessage(
                     Utils.LOCA("NG+ Options"),
-                    Utils.LOCA("All equipment have been sold."),
+                    Utils.LOCA("All weapons and accessories have been sold."),
                     CompleteNGPlusOptions
                 );
             });

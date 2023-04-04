@@ -132,7 +132,7 @@ namespace eradev.monstersanctuary.GetAllArmyRewards
                 DialogueView.Instance.Open(
                     ___monsterArmyNPC,
                     string.Format(
-                        Utils.LOCA("Thanks to your effort the total Monster Army strength reached the strength of {0}! Here are some special rewards:"),
+                        Utils.LOCA("Thanks to your efforts the Monster Army has reached {0} total strength! Here are some special rewards:"),
                         $"{{{lastReachedGoal}}}"),
                     string.Empty,
                     DisplayRewards,
