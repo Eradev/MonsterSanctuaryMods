@@ -81,7 +81,7 @@ namespace eradev.monstersanctuary.ShiftColorName
 
                 menuItem.TextColorOverride = monster.Shift switch
                 {
-                    EShift.Normal => menuItem.TextColorOverride,
+                    EShift.Normal => Color.gray,
                     EShift.Light => GameDefines.ColorLightShift,
                     EShift.Dark => GameDefines.ColorDarkShift,
                     _ => throw new ArgumentOutOfRangeException()
