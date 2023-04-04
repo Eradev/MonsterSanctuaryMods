@@ -336,9 +336,14 @@ namespace eradev.monstersanctuary.RandomRandomizer
                 _log.LogDebug($"Chest ID: {__instance.ID}");
                 _log.LogDebug($"Chest name: {__instance.name}");
 
-                if (!_isEnabled.Value || !_randomizeChestsEnabled.Value)
+                if (__instance.Item != null)
                 {
-                    _log.LogDebug("ChestRandomizer ignore: Disabled in config");
+                    _log.LogDebug($"Item name: {__instance.Item.name}");
+                }
+
+                if (__instance.Item != null && __instance.Item.name.ToLower().Contains("key"))
+                {
+                    _log.LogDebug("ChestRandomizer ignore: Item name contains key");
 
                     return;
                 }
@@ -359,21 +364,28 @@ namespace eradev.monstersanctuary.RandomRandomizer
 
                 if (__instance.Item != null && __instance.Item.GetComponent<KeyItem>() != null)
                 {
-                    _log.LogDebug("ChestRandomize ignore: Key chest");
+                    _log.LogDebug("ChestRandomizer ignore: Key chest");
 
                     return;
                 }
 
                 if (__instance.Item != null && __instance.Item.GetComponent<UniqueItem>() != null)
                 {
-                    _log.LogDebug("ChestRandomize ignore: Unique item chest");
+                    _log.LogDebug("ChestRandomizer ignore: Unique item chest");
 
                     return;
                 }
 
                 if (__instance.ID == 11)
                 {
-                    _log.LogDebug("ChestRandomize ignore: Raw Hide chest (Quest)");
+                    _log.LogDebug("ChestRandomizer ignore: Raw Hide chest (Quest)");
+
+                    return;
+                }
+
+                if (!_isEnabled.Value || !_randomizeChestsEnabled.Value)
+                {
+                    _log.LogDebug("ChestRandomizer ignore: Disabled in config");
 
                     return;
                 }
