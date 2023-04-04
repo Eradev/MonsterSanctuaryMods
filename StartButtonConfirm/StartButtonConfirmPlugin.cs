@@ -22,16 +22,17 @@ namespace eradev.monstersanctuary.StartButtonConfirm
             [UsedImplicitly]
             private static bool Prefix(ref NameMenu __instance)
             {
-                if (!Input.GetKeyUp(KeyCode.JoystickButton7))
+                // couldn't get this to work with my controller directly so I use another app
+                // to make my controller's start button simulate the PageDown key
+                if (Input.GetKeyUp(KeyCode.PageDown))
                 {
-                    return true;
+                    __instance.MenuList.SelectMenuItem(__instance.ConfirmKey);
+
+                    SFXController.Instance.PlaySFX(SFXController.Instance.SFXMenuConfirm);
+
+                    return false;
                 }
-
-                __instance.MenuList.SelectMenuItem(__instance.ConfirmKey);
-
-                SFXController.Instance.PlaySFX(SFXController.Instance.SFXMenuConfirm);
-
-                return false;
+                return true;
             }
         }
     }
