@@ -336,6 +336,21 @@ namespace eradev.monstersanctuary.RandomRandomizer
                 _log.LogDebug($"Chest ID: {__instance.ID}");
                 _log.LogDebug($"Chest name: {__instance.name}");
 
+                if (__instance.Item != null)
+                {
+                    _log.LogDebug($"Chest item name: {__instance.Item.GetComponent<BaseItem>().GetName()}");
+                }
+                else if (__instance.Gold == 0)
+                {
+                    _log.LogDebug("ChestRandomizer ignore: Item is null and has no gold");
+
+                    return;
+                }
+                else
+                {
+                    _log.LogDebug($"Chest gold: {__instance.Gold}");
+                }
+
                 if (!_isEnabled.Value || !_randomizeChestsEnabled.Value)
                 {
                     _log.LogDebug("ChestRandomizer ignore: Disabled in config");
